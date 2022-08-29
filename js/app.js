@@ -1,68 +1,106 @@
-// globales
-let usuario
-let contraseña
 
-class burguer{
-    constructor(nombre, imgSrc, ingredientes, precio){
-        this.nombre = nombre
-        this.imgSrc = imgSrc
-        this.ingredientes = ingredientes
-        this.precio = precio
-    }
+
+const hamburguesas = [burguer1, burguer2, burguer3, burguer4, burguer5]
+
+let carrito
+if (localStorage.getItem('carrito')){
+    carrito = JSON.parse(localStorage.getItem('carrito'))
+}else {
+    carrito = []
 }
-const burguer1 = new burguer("Clasica",'https://www.atriumpizzayburger.com/sites/default/files/images/productos/tradicional.jpg', "Pan brioche, 150g de carne Certified Angus Beef ®, Queso mozarella, Lechuga, Tomate", 17)
-const burguer2 = new burguer("Gaucha", "https://www.atriumpizzayburger.com/sites/default/files/images/productos/gaucha.jpg","Pan brioche, 150g de carne Certified Angus Beef ®, Queso mozarella, Chorizo argentino, Chimichurri, Tomate, Cebolla grillé, Salsa de la casa", 21)
-const burguer3 = new burguer("Americana", "https://www.atriumpizzayburger.com/sites/default/files/images/productos/_mg_1550_compress.jpg", "Pan brioche, 150g de carne Certified Angus Beef ®, Queso cheddar, Tocineta, Pepinillos, Lechuga, Tomate, Cebolla grillé, Salsa de la casa", 21)
-const burguer4 = new burguer("Doble toque", "https://www.atriumpizzayburger.com/sites/default/files/images/productos/doble_troque.jpg", "Pan brioche, 300g de carne Certified Angus Beef ®, Doble queso americano, Doble tocineta, Cebolla crunch, Lechuga crespa, Tomate fresco, Salsa de la casa", 30)
-const burguer5 = new burguer("Suprema", "https://www.atriumpizzayburger.com/sites/default/files/images/productos/la_fantastica.jpg", "Pan brioche, 150g de carne Certified Angus Beef ®, Queso cheddar, Tocineta, Huevo, Lechuga, Tomate, Cebolla grillé, Salsa de la casa", 8)
 
-
-const burguers = [burguer1, burguer2, burguer3, burguer4, burguer5]
 
 const cardContainerQuery = document.querySelector('#cardContainer')
+const carritoContainer = document.querySelector('#carritoContainer')
+const carritoList = document.querySelector('.carritoList')
+const irAlCarrito = document.querySelector('.irAlCarrito')
+const carritoVacio = document.querySelector('.carritoSinNada')
 
-burguers.forEach((bur) => {
+
+
+// Funciones
+
+const guardarEnStorage = (nombre, valor) => {
+    localStorage.setItem(nombre, JSON.stringify(valor))
+}
+
+const renderizarListaHamburguesas = (array) => {
+    array.forEach((hamburguesa) => {
     const cardProducto = document.createElement('div')
     cardProducto.innerHTML = `
-        <h3 class="cardTitle"> Hamburguesa ${bur.nombre} </h3>
-        <img src="${bur.imgSrc}" class="cardImg">
-        <p class="cardDesc"> ${bur.ingredientes}</p>
-        <span class="cardPrice"> $${bur.precio} Cop </span>
-        <button class="buttonCTA"> Agregar al Carrito </button>
+        <h3 class="cardTitle"> Hamburguesa ${hamburguesa.nombre} </h3>
+        <img src="${hamburguesa.imgSrc}" class="cardImg">
+        <p class="cardDesc"> ${hamburguesa.ingredientes}</p>
+        <span class="cardPrice"> $${hamburguesa.precio} Cop </span>
+        <button class="buttonCTA" data-id=${hamburguesa.nombre}> Agregar al Carrito </button>
     `
     cardProducto.className = 'card'
     cardContainerQuery.append(cardProducto)
-})
+    })
+
+    document.querySelectorAll('.buttonCTA').forEach((button) => {
+        button.addEventListener('click', agregarAlCarrito)
+    })
+}
+
+const agregarAlCarrito = (e) => {
+   
+    const hamburguesaIdSeleccionada = e.target.closest('.buttonCTA').getAttribute('data-id')
+    const hamburguesaSeleccionada = hamburguesas.find((hamburguesa) => hamburguesa.nombre == hamburguesaIdSeleccionada)
+    carrito.push(hamburguesaSeleccionada)
+    guardarEnStorage('carrito', (carrito))
+    
+}
+
+const renderizarCarrito = () => {
+    carritoList.innerHTML = ''
+    carrito.forEach((hamburguesa) => {
+        const carritoEnUso = document.createElement('div')
+        carritoEnUso.classList.add('carrito')
+        carritoEnUso.setAttribute('data-id', hamburguesa.nombre)
+        carritoEnUso.innerHTML = `
+            <div class="carritoImg">
+                <img src="${hamburguesa.imgSrc}" alt="${hamburguesa.nombre}">
+            </div>
+            <span class="carritoText"> ${hamburguesa.nombre} </span>
+        `
+        carritoVacio.innerHTML = ` Vaciar `
+        carritoList.append(carritoEnUso)
+    })
+    document.querySelectorAll('.carrito').forEach((button) => {
+        button.addEventListener('click', eliminarHamburguesaDeCarrito)
+    })
+}
+
+const eliminarHamburguesaDeCarrito = (e) => {
+    const HamburguesaIdSeleccionada = e.target.closest('.carrito').getAttribute('data-id')
+    carrito = carrito.filter((hamburguesa) => hamburguesa.nombre != HamburguesaIdSeleccionada)
+    guardarEnStorage('carrito', carrito)
+    renderizarEquipoPokemon()
+}
+
+const vaciarEquipo = () => {
+    carrito = []
+    guardarEnStorage('carrito', carrito)
+    carritoList.innerHTML = ''
+    carritoVacio.innerHTML = ''
+}
 
 
 
-let opcion = Number(prompt("elige una opcion de la lista"));
+const carritoGuardado = JSON.parse(localStorage.getItem('carrito'))
+console.log(carritoGuardado);
 
-while(opcion > 0 && opcion <=3 ){
-    switch(opcion){
-        case 1:
-            alert("REGISTRO");
-            usuario = prompt("ingrese su usuario")
-            contraseña = prompt("ingrese contraseña")
-            break;
-        case 2:
-            let producto
-            var precioTotal = 0
-            const nP = window.prompt("cuantos productos desea comprar");
-            for(let i = 1; i <= nP ; i++){
-                producto = prompt("escribe el nombre de tu producto numero "+ i).toLowerCase();
-                burguers.forEach((Hnombre) => {
-                    if (Hnombre.nombre.toLowerCase() === producto){
-                        precioTotal += Hnombre.precio 
-                    }
-                })       
-            }
-            alert("El total de tu compra es "+ precioTotal + " Cop");
-            break;
-        default:
-            alert("seleccione una opcion de la lista")
-            break;
-    }
-    alert("Si quiere elegir otra opcion seleccionela ahora, de lo contrario escriba otro numero para salir")
-    opcion = Number(prompt());
+
+// EventListeners
+
+irAlCarrito.addEventListener('click', renderizarCarrito)
+carritoVacio.addEventListener('click', vaciarEquipo)
+
+
+// Ejecuciones
+
+renderizarListaHamburguesas (hamburguesas)
+if (localStorage.getItem('carrito')){
+    carrito = JSON.parse(localStorage.getItem('carrito'))
 }

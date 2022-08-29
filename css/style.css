@@ -25,6 +25,7 @@ li{
 }
 
 .cardContainer {
+    margin-top: 100px;
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
@@ -64,4 +65,50 @@ li{
 .buttonCTA:hover {
     background-color: rgb(184, 64, 64);
     box-shadow: 1px 1px 10px lightgrey;
+}
+
+.irAlCarrito{
+    margin-bottom: 100px;
+}
+
+.carritoList{
+    margin-top: 100px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.carrito{
+    width: 15%;
+    
+    display: flex;
+    padding-left: 20px;
+    align-items: center;
+    background-color: rgb(193, 193, 193);
+    border: none;
+    border-radius: 30px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    user-select: none;
+    overflow: hidden;
+}
+
+.carritoImg{
+    width: 50px;
+    margin-right: 5px;
+}
+
+.carritoImg img {
+    width: 100%;
+}
+
+.carritoText {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.carritoSinNada{
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
