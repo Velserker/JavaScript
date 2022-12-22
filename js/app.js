@@ -2,6 +2,9 @@
 //--------------
 
 // Array de todos los Pokemon (que estan en data.js)
+const pokeData = new PokemonV2()
+pokeData.get()
+
 const allPokemon = [bulbasaur, charmander, squirtle, pikachu, eevee, mew, pidgey, zubat]
 
 // Equipo Pokemon
@@ -33,20 +36,25 @@ const guardarEnStorage = (nombre, valor) => {
     localStorage.setItem(nombre, JSON.stringify(valor))
 }
 
-const renderizarListaPokemon = (array) => {
+const renderizarListaPokemon = (array, limit=8) => {
     pokemonListContainer.innerHTML = ''
-    array.forEach((pokemon) => {
+    let count = 0
+    
+    for (const pokemon of array) {
+        count++
         const pokemonButton = document.createElement('button')
         pokemonButton.classList.add('menuTab')
         pokemonButton.setAttribute('data-id', pokemon.id)
         pokemonButton.innerHTML = `
             <div class="menuTabImg">
-                <img src="${pokemon.icon}" alt="${pokemon.name}">
+                <img src="${pokemon.image}" alt="${pokemon.name}">
             </div>
             <span class="menuTabText"> ${pokemon.name} </span>
         `
         pokemonListContainer.append(pokemonButton)
-    })
+
+        if (count >= limit) break
+    }
 
     document.querySelectorAll('.menuTab').forEach((button) => {
         button.addEventListener('click', renderizarDatosPokemon)
@@ -112,7 +120,7 @@ const vaciarEquipo = () => {
 
 const buscarPokemon = () => {
     const query = searchBar.value.toLowerCase()
-    const arrayResultados = allPokemon.filter((pokemon) => pokemon.name.toLowerCase().includes(query))
+    const arrayResultados = pokeData.pokemonList.filter((pokemon) => pokemon.name.toLowerCase().includes(query))
     renderizarListaPokemon(arrayResultados)
 }
 
@@ -128,9 +136,14 @@ searchBar.addEventListener('input', buscarPokemon)
 // Ejecuciones
 //------------
 
-renderizarListaPokemon(allPokemon)
+renderizarListaPokemon(pokeData.pokemonList)
 
 if (localStorage.getItem('equipoPokemon')) {
     equipoPokemon = JSON.parse(localStorage.getItem('equipoPokemon'))
     renderizarEquipoPokemon()
 }
+
+
+
+
+
